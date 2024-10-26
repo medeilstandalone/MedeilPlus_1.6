@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="appointment" language="groovy" pageWidth="595" pageHeight="400" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="doctorname" class="java.lang.String"/>
+	<parameter name="appdate" class="java.lang.String"/>
+	<parameter name="starttime" class="java.lang.String"/>
+	<parameter name="endtime" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from medp_appointment_mt where doctor_name=$P{doctorname} and appointment_date=$P{appdate}
+
+and STR_TO_DATE(appoint_fromtime,'%h:%i %p') between STR_TO_DATE($P{starttime},'%h:%i%p') and STR_TO_DATE($P{endtime},'%h:%i%p')
+
+and STR_TO_DATE(appoint_totime,'%h:%i %p') between STR_TO_DATE($P{starttime},'%h:%i%p') and STR_TO_DATE($P{endtime},'%h:%i
+%p')]]>
+	</queryString>
+	<field name="id" class="java.lang.Long"/>
+	<field name="appoint_no" class="java.lang.String"/>
+	<field name="patient_name" class="java.lang.String"/>
+	<field name="doctor_name" class="java.lang.String"/>
+	<field name="appoint_reason" class="java.lang.String"/>
+	<field name="emergency_level" class="java.lang.String"/>
+	<field name="appointment_date" class="java.sql.Date"/>
+	<field name="appoint_fromtime" class="java.lang.String"/>
+	<field name="appoint_totime" class="java.lang.String"/>
+	<field name="created_by" class="java.lang.String"/>
+	<field name="created_on" class="java.sql.Timestamp"/>
+	<field name="updated_by" class="java.lang.String"/>
+	<field name="updated_on" class="java.sql.Timestamp"/>
+	<field name="is_active" class="java.lang.Boolean"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<textField>
+				<reportElement x="203" y="3" width="201" height="20"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doctor_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="85" y="3" width="118" height="20"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DOCTOR NAME :]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<summary>
+		<band height="222" splitType="Stretch">
+			<ganttChart>
+				<chart renderType="draw" theme="aegean">
+					<reportElement x="0" y="0" width="555" height="213" backcolor="#FF3366"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend backgroundColor="#FFFFFF" position="Bottom"/>
+				</chart>
+				<ganttDataset>
+					<ganttSeries>
+						<seriesExpression><![CDATA[""+$F{appointment_date}]]></seriesExpression>
+						<taskExpression><![CDATA[""+$F{appoint_no}+" "+$F{patient_name}]]></taskExpression>
+						<subtaskExpression><![CDATA[new SimpleDateFormat("hh:mm a").parse(($F{appoint_fromtime}))]]></subtaskExpression>
+						<startDateExpression><![CDATA[new SimpleDateFormat("hh:mm a").parse(($F{appoint_fromtime}))]]></startDateExpression>
+						<endDateExpression><![CDATA[new SimpleDateFormat("hh:mm a").parse(($F{appoint_totime}))]]></endDateExpression>
+					</ganttSeries>
+				</ganttDataset>
+				<barPlot isShowLabels="true" isShowTickLabels="true" isShowTickMarks="true">
+					<plot orientation="Horizontal" backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="0.0"/>
+					<itemLabel color="#000000" backgroundColor="#FFFFFF"/>
+					<categoryAxisLabelExpression><![CDATA["APPOINTMENT NO."]]></categoryAxisLabelExpression>
+					<categoryAxisFormat labelRotation="0.0">
+						<axisFormat verticalTickLabels="false">
+							<labelFont/>
+							<tickLabelFont/>
+						</axisFormat>
+					</categoryAxisFormat>
+					<valueAxisLabelExpression><![CDATA["TIME"]]></valueAxisLabelExpression>
+					<valueAxisFormat>
+						<axisFormat verticalTickLabels="false">
+							<labelFont/>
+							<tickLabelFont/>
+						</axisFormat>
+					</valueAxisFormat>
+					<rangeAxisMinValueExpression><![CDATA[new SimpleDateFormat("hh:mm a").parse(($P{starttime}))]]></rangeAxisMinValueExpression>
+					<rangeAxisMaxValueExpression><![CDATA[new SimpleDateFormat("hh:mm a").parse(($P{endtime}))]]></rangeAxisMaxValueExpression>
+				</barPlot>
+			</ganttChart>
+		</band>
+	</summary>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="112" y="16" width="327" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No Appointment for the doctor on the date specified]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>
